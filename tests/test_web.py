@@ -8,6 +8,7 @@ from conftest import FakeClock
 from fastapi.testclient import TestClient
 from feeds import PATIENT_EVENT, calendar
 
+from cabinet.feed import to_https
 from cabinet.main import create_app
 from cabinet.settings import ConfigError, Settings
 
@@ -142,3 +143,25 @@ def test_missing_feed_url_is_a_config_error() -> None:
 
 def test_settings_repr_hides_the_feed_url() -> None:
     assert "secret-token" not in repr(Settings(feed_url=FEED_URL))
+
+
+def test_feed_url_is_read_from_the_environment() -> None:
+    settings = Settings.from_env({"FEED_URL": f"  {FEED_URL}\n"})
+
+    assert settings.feed_url == FEED_URL
+
+
+def test_blank_feed_url_is_a_config_error() -> None:
+    with pytest.raises(ConfigError):
+        Settings.from_env({"FEED_URL": "   "})
+
+
+@pytest.mark.parametrize(
+    ("url", "expected"),
+    [
+        ("webcal://calendars.test/a", "https://calendars.test/a"),
+        ("https://calendars.test/a", "https://calendars.test/a"),
+    ],
+)
+def test_feed_links_end_up_on_https(url: str, expected: str) -> None:
+    assert to_https(url) == expected

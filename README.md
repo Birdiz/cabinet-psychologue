@@ -1,5 +1,7 @@
 # cabinet-psychologue
 
+[![CI](https://github.com/Birdiz/cabinet-psychologue/actions/workflows/ci.yml/badge.svg)](https://github.com/Birdiz/cabinet-psychologue/actions/workflows/ci.yml)
+
 Public page listing a practice's free appointment slots, built from a dedicated calendar feed (only the start and end of each event are kept).
 
 ## Prerequisites
@@ -26,10 +28,10 @@ make up                # builds the image, reads .env if present
 ## Checks
 
 ```sh
-make check             # lint + type check + tests
+make check             # lint + strict type check + tests (95 % coverage gate)
 ```
 
-Run `make` alone to list every target.
+Run `make` alone to list every target. CI runs the same checks on every push to `main` and every pull request, then builds the production image and loads the page from it.
 
 ## Configuration
 

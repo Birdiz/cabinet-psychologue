@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, types, tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+      - name: Install from the lockfile
+        run: uv sync --locked
+      - name: Lint and formatting
+        run: make lint
+      - name: Strict type check
+        run: make typecheck
+      - name: Tests with coverage gate
+        run: make test
+
+  image:
+    name: Image builds and serves
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build the production image
+        run: docker build -t cabinet .
+      # The feed is unreachable on purpose: the page must still render, which also
+      # proves the templates and stylesheet are packaged into the image.
+      - name: Boot the image and load the page
+        run: |
+          docker run -d --name cabinet -p 127.0.0.1:8000:8000 \
+            -e FEED_URL=https://example.invalid/feed.ics cabinet
+          curl --fail --silent --show-error --retry 20 --retry-all-errors --retry-delay 1 \
+            http://127.0.0.1:8000/ | grep -q "Hannah Schreiber"
+          curl --fail --silent --show-error --output /dev/null \
+            http://127.0.0.1:8000/static/site.css

@@ -1,10 +1,10 @@
 import asyncio
-from datetime import timedelta
+from datetime import UTC, timedelta
 
 from conftest import FakeClock
 from feeds import calendar, event
 
-from cabinet.agenda import Agenda
+from cabinet.agenda import Agenda, utc_now
 from cabinet.slots import FeedError
 
 FEED = calendar(event("20261110T140000", "20261110T144500"))
@@ -72,3 +72,32 @@ def test_slots_past_seven_days_are_hidden(clock: FakeClock) -> None:
     asyncio.run(agenda.refresh())
 
     assert starts(agenda) == []
+
+
+def test_polling_survives_a_failed_refresh(clock: FakeClock) -> None:
+    calls = 0
+    recovered = asyncio.Event()
+
+    async def fetch() -> bytes:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise FeedError("down")
+        recovered.set()
+        return FEED
+
+    agenda = Agenda(fetch, stale_after=timedelta(hours=1), clock=clock)
+
+    async def scenario() -> None:
+        polling = asyncio.create_task(agenda.poll_forever(timedelta(0)))
+        await asyncio.wait_for(recovered.wait(), timeout=1)
+        polling.cancel()
+
+    asyncio.run(scenario())
+
+    assert calls >= 2
+    assert agenda.is_fresh
+
+
+def test_default_clock_is_timezone_aware() -> None:
+    assert utc_now().tzinfo is UTC

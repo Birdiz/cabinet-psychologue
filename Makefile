@@ -24,8 +24,8 @@ dev: ## Run the app with auto-reload on http://localhost:8000
 
 ## --- Quality ---------------------------------------------------------------
 
-test: ## Run the test suite
-	uv run pytest
+test: ## Run the test suite with the coverage gate
+	uv run pytest --cov
 
 lint: ## Check lint and formatting (no changes)
 	uv run ruff check .

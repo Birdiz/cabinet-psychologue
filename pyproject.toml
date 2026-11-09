@@ -24,6 +24,7 @@ build-backend = "uv_build"
 dev = [
     "mypy>=2.4.0",
     "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
     "ruff>=0.16.10",
 ]
 
@@ -34,3 +35,11 @@ files = ["src", "tests"]
 [[tool.mypy.overrides]]
 module = "recurring_ical_events"
 ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ["cabinet"]
+
+[tool.coverage.report]
+fail_under = 95
+show_missing = true

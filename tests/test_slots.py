@@ -101,3 +101,9 @@ def test_unreadable_feed_fails_without_quoting_it(raw: bytes) -> None:
 
     assert "Dupont" not in str(caught.value)
     assert caught.value.__cause__ is None
+
+
+def test_floating_times_are_read_as_practice_time() -> None:
+    raw = calendar(raw_event("DTSTART:20261110T090000", "DTEND:20261110T094500"))
+
+    assert parse(raw) == [Slot(paris(10, 9), paris(10, 9, 45))]
