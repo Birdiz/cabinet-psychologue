@@ -1,60 +1,95 @@
 {% extends "base.html" %}
-{% block content %}
-<p class="intro">{{ practice.intro }}</p>
+{% block meta %}
+  <meta name="description" content="{{ practice.name }}, {{ practice.profession | lower }}. {{ practice.intro }}. {{ practice.address_lines | join(', ') }}. {{ practice.phone_display }}.">
+{% endblock %}
+{% block skip %}<a class="skip" href="#creneaux">Aller aux créneaux disponibles</a>{% endblock %}
+{% block main %}
+<main>
+  <section class="hero">
+    <span class="mask mask--pair" aria-hidden="true"></span>
+    <h1>{{ practice.intro }}</h1>
+    <p>{{ practice.lead }}</p>
+  </section>
 
-<section class="agenda" aria-labelledby="agenda-title">
-  <h1 id="agenda-title">Créneaux disponibles</h1>
+  <div class="slots-wrap">
+    <section class="slots" id="creneaux" aria-labelledby="creneaux-titre">
+      <div class="slots__head">
+        <h2 id="creneaux-titre">Créneaux disponibles</h2>
+        {% if days is not none %}
+          <p class="slots__updated">Les sept prochains jours{% if updated_at %}, mis à jour à {{ updated_at }}{% endif %}.</p>
+        {% endif %}
+      </div>
 
-  {% if days is none %}
-    <p class="notice">Les créneaux ne peuvent pas être affichés pour le moment. Merci de contacter le cabinet par téléphone.</p>
-  {% else %}
-    <p class="meta">Les sept prochains jours{% if updated_at %}, mis à jour à {{ updated_at }}{% endif %}.</p>
-    {% if days %}
-      <div class="days">
-        {% for day in days %}
-          <section class="day">
-            <h2><time datetime="{{ day.iso }}">{{ day.label }}</time></h2>
-            <ul class="slots">
-              {% for slot in day.slots %}
-                <li><time datetime="{{ slot.start_iso }}">{{ slot.label }}</time></li>
-              {% endfor %}
-            </ul>
-          </section>
+      {% if days is none %}
+        <p class="notice notice--error">Les créneaux ne peuvent pas être affichés pour le moment. Merci de contacter le cabinet par téléphone.</p>
+      {% elif days %}
+        <ul class="days">
+          {% for day in days %}
+            <li class="day">
+              <span class="day__name"><time datetime="{{ day.iso }}">{{ day.label }}</time></span>
+              {% if day.slots %}
+                <ul class="times">
+                  {% for slot in day.slots %}
+                    <li class="time"><time datetime="{{ slot.start_iso }}">{{ slot.label }}</time></li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <span class="day__closed">Fermé</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="notice notice--empty">Aucun créneau libre sur les sept prochains jours.</p>
+      {% endif %}
+
+      <div class="booking">
+        <p>Pour prendre rendez-vous, appelez le cabinet au {{ practice.phone_display | replace(" ", " ") }}.</p>
+        <a class="button" href="tel:{{ practice.phone_e164 }}">Appeler le cabinet</a>
+      </div>
+    </section>
+  </div>
+
+  <section class="section" aria-labelledby="cabinet-titre">
+    <div class="section__inner section__inner--wide">
+      <h2 class="center" id="cabinet-titre">Le cabinet</h2>
+      <div class="cols">
+        <div class="col">
+          <h3>Parcours</h3>
+          <p>{{ practice.background }}</p>
+        </div>
+        <div class="col">
+          <h3>L’approche</h3>
+          <p>{{ practice.approach }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="consult-titre">
+    <div class="section__inner">
+      <h2 class="center" id="consult-titre">Consultations</h2>
+      <dl class="facts">
+        {% for consultation in practice.consultations %}
+          <div class="fact"><dt>Type</dt><dd>{{ consultation.kind }}</dd></div>
+          <div class="fact"><dt>Durée</dt><dd>{{ consultation.duration }}</dd></div>
+          <div class="fact"><dt>Tarif</dt><dd>{{ consultation.price }}</dd></div>
         {% endfor %}
+      </dl>
+    </div>
+  </section>
+
+  <section class="access" aria-labelledby="acces-titre">
+    <span class="mask mask--pair" aria-hidden="true"></span>
+    <div class="section__inner">
+      <h2 id="acces-titre">Accès</h2>
+      <address>{{ practice.address_lines | join("<br>" | safe) }}</address>
+      <p>{{ practice.access }}</p>
+      <div class="contact">
+        <a href="tel:{{ practice.phone_e164 }}">{{ practice.phone_display }}</a>
+        <a href="mailto:{{ practice.email }}">{{ practice.email }}</a>
       </div>
-    {% else %}
-      <p class="notice">Aucun créneau libre sur les sept prochains jours.</p>
-    {% endif %}
-  {% endif %}
-
-  <p class="cta">Pour prendre rendez-vous, appelez le cabinet au <a href="tel:{{ practice.phone_e164 }}">{{ practice.phone_display }}</a>.</p>
-</section>
-
-<section aria-labelledby="about-title">
-  <h2 id="about-title">Le cabinet</h2>
-  {% for paragraph in practice.about %}
-    <p>{{ paragraph }}</p>
-  {% endfor %}
-</section>
-
-<section aria-labelledby="rates-title">
-  <h2 id="rates-title">Consultations</h2>
-  <dl class="rates">
-    {% for consultation in practice.consultations %}
-      <div>
-        <dt>{{ consultation.kind }}</dt>
-        <dd>{{ consultation.duration }} · {{ consultation.price }}</dd>
-      </div>
-    {% endfor %}
-  </dl>
-</section>
-
-<section aria-labelledby="access-title">
-  <h2 id="access-title">Accès</h2>
-  <address>
-    {% for line in practice.address_lines %}{{ line }}<br>{% endfor %}
-  </address>
-  <p>{{ practice.access }}</p>
-  <p><a href="mailto:{{ practice.email }}">{{ practice.email }}</a></p>
-</section>
+    </div>
+  </section>
+</main>
 {% endblock %}

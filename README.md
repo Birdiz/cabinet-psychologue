@@ -55,6 +55,8 @@ The app refuses to boot without it. Practice details live in `src/cabinet/conten
 
 **Next seven days, not calendar week.** A Sunday-evening cancellation for Monday morning must be visible.
 
+**A day without a slot reads "Fermé".** The calendar only holds free slots, so the site cannot tell a full day from a day off. Today and the day the seven-day window ends on are only partly covered, so they are listed only when they hold a slot.
+
 **Nothing about visitors is collected by the app.** No cookies, no analytics, no third-party fonts or scripts, and uvicorn's access log is off. The Content-Security-Policy enforces the no-third-party rule in the browser.
 
 **What was left out.** Online booking, waitlists and notifications all require storing a name or a contact, which would mean handling health-adjacent data on the server.

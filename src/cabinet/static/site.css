@@ -1,204 +1,108 @@
-:root {
-  color-scheme: light dark;
-  --paper: #f7f3ec;
-  --card: #fffdf9;
-  --ink: #26332d;
-  --muted: #5c6a62;
-  --line: #ddd5c7;
-  --accent: #2f6250;
-  --accent-soft: #e2ece6;
-  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-}
+/* Hannah Schreiber, Psychologue: "Fidèle" identity. Fonts are self-hosted (OFL). */
+@font-face{font-family:"Sacramento";src:url("fonts/Sacramento-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Nunito";src:url("fonts/Nunito-Variable.woff2") format("woff2");font-weight:200 1000;font-display:swap}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #18201c;
-    --card: #212b26;
-    --ink: #e9e6df;
-    --muted: #a7b2ab;
-    --line: #36423b;
-    --accent: #93cdb3;
-    --accent-soft: #2b3b33;
+:root{
+  --bg:#F4EEEB; --surface:#FBF8F6; --ink:#2D2420; --muted:#5F514A;
+  --accent:#A13C17; --on-accent:#FFFFFF; --accent-soft:#EADBD3; --line:#DDCFC7;
+  --band:#A13C17; --on-band:#FFFFFF; --deco:#2D2420;
+  --pad:clamp(18px,5vw,64px);
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#1F1916; --surface:#2A221E; --ink:#F2EAE5; --muted:#C5B6AE;
+    --accent:#E58C69; --on-accent:#1F1916; --accent-soft:#3A2A23; --line:#46382F;
+    --band:#7A2E12; --on-band:#FFFFFF; --deco:#F2EAE5;
   }
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,sans-serif;font-size:17px;line-height:1.6}
+h1,h2,h3,p,ul,dl,dd,address{margin:0}
+a{color:var(--accent)}
+a:hover{color:var(--ink)}
+a:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:8px;top:-60px;background:var(--accent);color:var(--on-accent);padding:10px 16px;border-radius:8px;z-index:10}
+.skip:focus{top:8px}
 
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font: 1.0625rem/1.65 var(--sans);
-}
+.mask{display:block;background:var(--accent);-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat}
+.mask--mark{--src:url("assets/ginkgo-a-mark.svg")}
+.mask--pair{--src:url("assets/ginkgo-a.svg")}
 
-.wrap {
-  max-width: 44rem;
-  margin-inline: auto;
-  padding-inline: 1.25rem;
-}
+/* Header */
+.header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding:clamp(14px,2.4vw,24px) var(--pad);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand .mask{width:clamp(26px,3vw,34px);height:clamp(26px,3vw,34px)}
+.brand__text{display:flex;flex-direction:column;line-height:1}
+.brand__name{font-family:"Sacramento",cursive;font-size:clamp(28px,3vw,36px);color:var(--accent);line-height:1}
+.brand__role{font-size:13px;letter-spacing:.08em;color:var(--muted);margin-top:2px}
+.phone{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:1.5px solid var(--accent);border-radius:999px;color:var(--accent);font-weight:700;text-decoration:none;letter-spacing:.02em;white-space:nowrap}
+.phone:hover{background:var(--accent);color:var(--on-accent)}
 
-h1,
-h2 {
-  font-family: var(--serif);
-  font-weight: 500;
-  line-height: 1.2;
-}
+/* Hero */
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:clamp(36px,7vw,88px) var(--pad) clamp(28px,5vw,56px)}
+.hero .mask{width:clamp(130px,16vw,190px);aspect-ratio:1;background:var(--deco)}
+.hero h1{font-weight:600;font-size:clamp(28px,4.2vw,46px);line-height:1.2;letter-spacing:.01em;text-wrap:balance}
+.hero p{color:var(--muted);font-size:clamp(17px,1.6vw,19px);max-width:34em;text-wrap:pretty}
 
-h1 {
-  margin: 0 0 0.25rem;
-  font-size: 2rem;
-}
+/* Sections */
+.section{padding:clamp(40px,7vw,88px) var(--pad);border-top:1px solid var(--line)}
+.section__inner{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.section__inner--wide{max-width:1000px;gap:28px}
+.section h2{font-size:clamp(24px,2.6vw,30px);font-weight:700;color:var(--accent);line-height:1.25}
+.center{text-align:center}
 
-h2 {
-  margin: 0 0 0.75rem;
-  font-size: 1.4rem;
-}
+/* Slots */
+.slots-wrap{padding:0 clamp(14px,5vw,64px) clamp(40px,7vw,88px)}
+.slots{max-width:780px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(22px,4vw,44px);display:flex;flex-direction:column;gap:22px}
+.slots__head{display:flex;flex-direction:column;gap:4px}
+.slots__updated{color:var(--muted);font-size:16px}
+.days{list-style:none;padding:0}
+.day{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding:14px 0;border-top:1px solid var(--line)}
+.day__name{font-weight:700;min-width:12em}
+.times{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
+.time{background:var(--accent-soft);color:var(--accent);font-weight:600;padding:6px 14px;border-radius:999px;font-size:16px;white-space:nowrap}
+.day__closed{color:var(--muted);font-style:italic}
+.notice{padding:20px;border-radius:14px;font-weight:600}
+.notice--empty{background:var(--accent-soft)}
+.notice--error{border:1.5px dashed var(--muted)}
+.booking{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;padding-top:6px}
+.booking p{flex:1 1 260px;text-wrap:pretty}
+.button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:700;text-decoration:none}
+.button:hover{background:var(--ink);color:var(--bg)}
+@media (max-width:480px){.button{width:100%}}
 
-a {
-  color: var(--accent);
-  text-underline-offset: 0.15em;
-}
+/* Practice */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px 48px}
+.col{display:flex;flex-direction:column;gap:8px}
+.col h3{font-size:19px}
 
-a:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
+/* Consultations */
+.facts{display:flex;flex-direction:column}
+.fact{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding:14px 0;border-top:1px solid var(--line)}
+.fact:last-child{border-bottom:1px solid var(--line)}
+.fact dt{font-weight:700}
 
-address {
-  font-style: normal;
-}
+/* Access */
+.access{position:relative;overflow:hidden;background:var(--band);color:var(--on-band);padding:clamp(44px,7vw,88px) var(--pad)}
+.access .mask{position:absolute;right:-40px;bottom:-50px;width:clamp(200px,28vw,360px);aspect-ratio:1;opacity:.22;background:var(--on-band)}
+.access .section__inner{position:relative}
+.access h2{color:var(--on-band)}
+.access address{font-style:normal;font-size:19px;line-height:1.5}
+.contact{display:flex;flex-direction:column;gap:6px;font-weight:600}
+.contact a{display:inline-flex;align-items:center;min-height:44px;color:var(--on-band);overflow-wrap:anywhere}
+.contact a:hover{color:var(--on-band);text-decoration-thickness:2px}
+.access a:focus-visible{outline-color:var(--on-band)}
 
-main > section {
-  margin-block: 3rem;
-}
+/* Footer */
+.footer{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 24px;padding:24px var(--pad);font-size:15px;color:var(--muted)}
+.footer a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink)}
 
-.masthead {
-  border-bottom: 1px solid var(--line);
-}
-
-.masthead-row,
-.footer-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1.5rem;
-}
-
-.masthead-row {
-  padding-block: 1rem;
-}
-
-.brand {
-  display: flex;
-  flex-direction: column;
-  color: inherit;
-  text-decoration: none;
-}
-
-.brand-name {
-  font: 500 1.3rem/1.25 var(--serif);
-}
-
-.brand-role,
-.meta,
-.footer {
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.phone {
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.intro {
-  margin-block: 2.5rem 0;
-  font: 1.3rem/1.5 var(--serif);
-}
-
-.agenda {
-  padding: 1.5rem;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 0.75rem;
-}
-
-.meta {
-  margin: 0 0 1.5rem;
-}
-
-.days {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.day h2 {
-  margin-bottom: 0.5rem;
-  font-size: 1.15rem;
-}
-
-.slots {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.slots li {
-  padding: 0.25rem 0.75rem;
-  background: var(--accent-soft);
-  border-radius: 999px;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.975rem;
-}
-
-.notice {
-  margin: 1rem 0;
-}
-
-.cta {
-  margin: 1.5rem 0 0;
-  padding-top: 1rem;
-  border-top: 1px solid var(--line);
-}
-
-.cta a {
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.rates {
-  margin: 0;
-}
-
-.rates div {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0 1.5rem;
-  padding-block: 0.5rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.rates dt {
-  font-weight: 600;
-}
-
-.rates dd {
-  margin: 0;
-}
-
-.footer {
-  margin-top: 4rem;
-  padding-block: 1.5rem;
-  border-top: 1px solid var(--line);
-}
+/* Legal notice */
+.legal{max-width:780px;margin:0 auto;padding:clamp(40px,7vw,88px) var(--pad);display:flex;flex-direction:column;gap:24px}
+.legal h1{font-size:clamp(28px,4vw,40px);font-weight:700;color:var(--accent)}
+.legal h2{font-size:20px;font-weight:700}
+.legal section{display:flex;flex-direction:column;gap:8px}

@@ -11,14 +11,14 @@ from fastapi.templating import Jinja2Templates
 
 from cabinet.agenda import Agenda, Clock, utc_now
 from cabinet.content import PRACTICE
-from cabinet.display import format_time, group_by_day
+from cabinet.display import format_time, week_days
 from cabinet.feed import fetch_feed
 from cabinet.settings import Settings
 
 _HERE = Path(__file__).parent
 _FEED_TIMEOUT_SECONDS = 10
 _CSP = (
-    "default-src 'none'; style-src 'self'; img-src 'self'; "
+    "default-src 'none'; style-src 'self'; img-src 'self'; font-src 'self'; "
     "base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 )
 
@@ -74,7 +74,7 @@ def create_app(
             "index.html",
             {
                 "practice": PRACTICE,
-                "days": None if slots is None else group_by_day(slots),
+                "days": None if slots is None else week_days(slots, clock()),
                 "updated_at": format_time(updated_at) if updated_at else None,
             },
             # The page is only useful fresh: browsers must revalidate it.
