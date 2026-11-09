@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="intro">{{ practice.intro }}</p>
+
+<section class="agenda" aria-labelledby="agenda-title">
+  <h1 id="agenda-title">Créneaux disponibles</h1>
+
+  {% if days is none %}
+    <p class="notice">Les créneaux ne peuvent pas être affichés pour le moment. Merci de contacter le cabinet par téléphone.</p>
+  {% else %}
+    <p class="meta">Les sept prochains jours{% if updated_at %}, mis à jour à {{ updated_at }}{% endif %}.</p>
+    {% if days %}
+      <div class="days">
+        {% for day in days %}
+          <section class="day">
+            <h2><time datetime="{{ day.iso }}">{{ day.label }}</time></h2>
+            <ul class="slots">
+              {% for slot in day.slots %}
+                <li><time datetime="{{ slot.start_iso }}">{{ slot.label }}</time></li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="notice">Aucun créneau libre sur les sept prochains jours.</p>
+    {% endif %}
+  {% endif %}
+
+  <p class="cta">Pour prendre rendez-vous, appelez le cabinet au <a href="tel:{{ practice.phone_e164 }}">{{ practice.phone_display }}</a>.</p>
+</section>
+
+<section aria-labelledby="about-title">
+  <h2 id="about-title">Le cabinet</h2>
+  {% for paragraph in practice.about %}
+    <p>{{ paragraph }}</p>
+  {% endfor %}
+</section>
+
+<section aria-labelledby="rates-title">
+  <h2 id="rates-title">Consultations</h2>
+  <dl class="rates">
+    {% for consultation in practice.consultations %}
+      <div>
+        <dt>{{ consultation.kind }}</dt>
+        <dd>{{ consultation.duration }} · {{ consultation.price }}</dd>
+      </div>
+    {% endfor %}
+  </dl>
+</section>
+
+<section aria-labelledby="access-title">
+  <h2 id="access-title">Accès</h2>
+  <address>
+    {% for line in practice.address_lines %}{{ line }}<br>{% endfor %}
+  </address>
+  <p>{{ practice.access }}</p>
+  <p><a href="mailto:{{ practice.email }}">{{ practice.email }}</a></p>
+</section>
+{% endblock %}

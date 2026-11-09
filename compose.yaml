@@ -1,0 +1,20 @@
+# Prod-like local run of the image. Day-to-day development stays native
+# (`make dev`); use this to check the container before deploying.
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    develop:
+      watch:
+        # The package is installed non-editable in the image, so any change
+        # needs a rebuild rather than a file sync.
+        - action: rebuild
+          path: ./src
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock

@@ -1,0 +1,29 @@
+# VCS and local tooling
+.git
+.gitignore
+.idea
+.vscode
+.context
+
+# Secrets: never in the build context
+.env
+.env.*
+
+# Local environments and caches
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# Not needed at runtime
+docs
+tests
+CLAUDE.md
+Makefile
+compose.yaml
+Dockerfile
+.dockerignore
