@@ -9,18 +9,18 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 WORKDIR /app
 
+# No RUN --mount here: Railway rejects cache mounts unless their id hardcodes
+# the service id, which would tie this file to one service.
+
 # Dependency layer: only invalidated when pyproject.toml or uv.lock change.
-RUN --mount=type=cache,target=/root/.cache/uv \
-    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
-    --mount=type=bind,source=uv.lock,target=uv.lock \
-    uv sync --locked --no-install-project --no-dev
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-install-project --no-dev
 
 # Project layer: install the package itself (non-editable, so the runtime
 # image does not need the source tree).
-COPY pyproject.toml uv.lock README.md ./
+COPY README.md ./
 COPY src ./src
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-dev --no-editable
+RUN uv sync --locked --no-dev --no-editable
 
 # --- runtime: slim image, non-root, venv only -------------------------------
 FROM python:3.13-slim-bookworm AS runtime
