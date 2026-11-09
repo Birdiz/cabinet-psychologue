@@ -6,7 +6,7 @@ import httpx
 import pytest
 from conftest import FakeClock
 from fastapi.testclient import TestClient
-from feeds import PATIENT_EVENT, calendar
+from feeds import PATIENT_EVENT, calendar, event
 
 from cabinet.main import create_app
 from cabinet.settings import ConfigError, Settings
@@ -35,6 +35,30 @@ def test_page_lists_slots_without_any_patient_data(clock: FakeClock) -> None:
     assert "14h00 – 14h45" in response.text
     assert "Dupont" not in response.text
     assert "dupont" not in response.text
+
+
+def test_days_without_a_slot_read_closed(clock: FakeClock) -> None:
+    with client_for(serving(calendar(PATIENT_EVENT)), clock) as client:
+        text = client.get("/").text
+
+    assert "Mercredi 11 novembre" in text
+    assert "Dimanche 15 novembre" in text
+    assert text.count("Fermé") == 5
+
+
+def test_partly_covered_days_appear_only_with_a_slot(clock: FakeClock) -> None:
+    with client_for(serving(calendar(PATIENT_EVENT)), clock) as client:
+        without_slot = client.get("/").text
+
+    assert "Lundi 9 novembre" not in without_slot
+    assert "Lundi 16 novembre" not in without_slot
+
+    last_day = event("20261116T090000", "20261116T094500")
+    with client_for(serving(calendar(last_day)), clock) as client:
+        with_slot = client.get("/").text
+
+    assert "Lundi 16 novembre" in with_slot
+    assert "9h00 – 9h45" in with_slot
 
 
 def test_page_says_so_when_there_is_no_slot(clock: FakeClock) -> None:
@@ -112,6 +136,7 @@ def test_page_sends_security_and_cache_headers(clock: FakeClock) -> None:
         headers = client.get("/").headers
 
     assert "default-src 'none'" in headers["content-security-policy"]
+    assert "font-src 'self'" in headers["content-security-policy"]
     assert headers["cache-control"] == "no-cache"
 
 
@@ -124,9 +149,20 @@ def test_legal_page_names_the_publisher_and_the_host(clock: FakeClock) -> None:
     assert "Railway Corporation" in response.text
 
 
-def test_stylesheet_is_served(clock: FakeClock) -> None:
+@pytest.mark.parametrize(
+    "path",
+    [
+        "site.css",
+        "favicon.svg",
+        "assets/ginkgo-a.svg",
+        "assets/ginkgo-a-mark.svg",
+        "fonts/Sacramento-Regular.woff2",
+        "fonts/Nunito-Variable.woff2",
+    ],
+)
+def test_static_files_are_served(path: str, clock: FakeClock) -> None:
     with client_for(serving(calendar()), clock) as client:
-        assert client.get("/static/site.css").status_code == 200
+        assert client.get(f"/static/{path}").status_code == 200
 
 
 @pytest.mark.parametrize("path", ["/docs", "/redoc", "/openapi.json"])

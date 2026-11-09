@@ -3,30 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ practice.name }}, {{ practice.profession }}{% endblock %}</title>
-  <meta name="description" content="{{ practice.profession }} : présentation du cabinet et créneaux de consultation disponibles.">
+  <title>{% block title %}{{ practice.name }}, {{ practice.profession }} à {{ practice.city }}{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <meta name="theme-color" content="#F4EEEB" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1F1916" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="{{ url_for('static', path='favicon.svg') }}" type="image/svg+xml">
+  <link rel="preload" href="{{ url_for('static', path='fonts/Nunito-Variable.woff2') }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ url_for('static', path='site.css') }}">
 </head>
 <body>
-  <header class="masthead">
-    <div class="wrap masthead-row">
-      <a class="brand" href="/">
-        <span class="brand-name">{{ practice.name }}</span>
-        <span class="brand-role">{{ practice.profession }}</span>
-      </a>
-      <a class="phone" href="tel:{{ practice.phone_e164 }}">{{ practice.phone_display }}</a>
-    </div>
+  {% block skip %}{% endblock %}
+
+  <header class="header">
+    <a class="brand" href="/" aria-label="{{ practice.name }}, {{ practice.profession }} — accueil">
+      <span class="mask mask--mark" aria-hidden="true"></span>
+      <span class="brand__text">
+        <span class="brand__name">{{ practice.name }}</span>
+        <span class="brand__role">{{ practice.profession }}</span>
+      </span>
+    </a>
+    <a class="phone" href="tel:{{ practice.phone_e164 }}"><span class="visually-hidden">Appeler le </span>{{ practice.phone_display }}</a>
   </header>
 
-  <main class="wrap">
-    {% block content %}{% endblock %}
-  </main>
+  {% block main %}{% endblock %}
 
   <footer class="footer">
-    <div class="wrap footer-row">
-      <span>{{ practice.name }}, {{ practice.profession }}</span>
-      <a href="/mentions-legales">Mentions légales</a>
-    </div>
+    <span>{{ practice.name }}, {{ practice.profession }} · {{ practice.registration }}</span>
+    <a href="/mentions-legales"{% block legal_link_attrs %}{% endblock %}>Mentions légales</a>
   </footer>
 </body>
 </html>

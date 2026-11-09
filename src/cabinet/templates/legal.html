@@ -1,27 +1,39 @@
 {% extends "base.html" %}
-{% block title %}Mentions légales, {{ practice.name }}{% endblock %}
-{% block content %}
-<h1>Mentions légales</h1>
+{% block title %}Mentions légales — {{ practice.name }}, {{ practice.profession }}{% endblock %}
+{% block meta %}
+  <meta name="robots" content="noindex">
+{% endblock %}
+{% block legal_link_attrs %} aria-current="page"{% endblock %}
+{% block main %}
+<main class="legal">
+  <h1>Mentions légales</h1>
 
-<section>
-  <h2>Éditeur du site</h2>
-  <p>
-    {{ practice.name }}, {{ practice.profession }}<br>
-    {% for line in practice.address_lines %}{{ line }}<br>{% endfor %}
-    Téléphone : {{ practice.phone_display }}<br>
-    E-mail : {{ practice.email }}<br>
-    {{ practice.registration }}
-  </p>
-</section>
+  <section>
+    <h2>Éditrice du site</h2>
+    <p>
+      {{ practice.name }}, {{ practice.profession }}<br>
+      {{ practice.address_lines | join(", ") }}<br>
+      {{ practice.phone_display }} · <a href="mailto:{{ practice.email }}">{{ practice.email }}</a>
+    </p>
+    <p>{{ practice.registration }} · {{ practice.siret }}</p>
+  </section>
 
-<section>
-  <h2>Hébergement</h2>
-  <p>{{ practice.host_name }}<br>{{ practice.host_address }}</p>
-</section>
+  <section>
+    <h2>Hébergement</h2>
+    <p>{{ practice.host_name }}<br>{{ practice.host_address }}</p>
+  </section>
 
-<section>
-  <h2>Données personnelles</h2>
-  <p>Ce site ne comporte ni formulaire, ni compte, ni cookie, ni outil de mesure d'audience, et ne charge aucune ressource tierce. L'application n'enregistre pas les adresses IP de ses visiteurs. L'hébergeur peut conserver des journaux techniques pour assurer le fonctionnement du service.</p>
-  <p>Les créneaux affichés ne contiennent qu'une heure de début et une heure de fin : aucune information sur les patients n'est transmise au site.</p>
-</section>
+  <section>
+    <h2>Données personnelles</h2>
+    <p>Ce site ne comporte ni formulaire, ni compte, ni cookie, ni outil de mesure d'audience, et ne charge aucune ressource tierce. L'application n'enregistre pas les adresses IP de ses visiteurs. L'hébergeur peut conserver des journaux techniques pour assurer le fonctionnement du service.</p>
+    <p>Les créneaux affichés ne contiennent qu'une heure de début et une heure de fin : aucune information sur les patients n'est transmise au site.</p>
+  </section>
+
+  <section>
+    <h2>Crédits</h2>
+    <p>Polices : Sacramento et Nunito, sous licence SIL Open Font License.</p>
+  </section>
+
+  <p><a href="/">Retour à l’accueil</a></p>
+</main>
 {% endblock %}
