@@ -41,4 +41,7 @@ EXPOSE 8000
 # exec replaces the shell so uvicorn is PID 1 and receives SIGTERM.
 # No secret is baked in: configuration comes from the runtime environment.
 # No access log: each line would hold the visitor's IP (personal data).
-CMD exec uvicorn "$APP_MODULE" --host 0.0.0.0 --port "${PORT:-8000}" --proxy-headers --no-access-log
+# Railway's proxy has no fixed address, and without trusting it url_for builds
+# http:// links that browsers block on the https page. The app never reads the
+# client IP, so a forged forwarded header can only alter the sender's own links.
+CMD exec uvicorn "$APP_MODULE" --host 0.0.0.0 --port "${PORT:-8000}" --proxy-headers --forwarded-allow-ips "*" --no-access-log
