@@ -56,7 +56,9 @@
       <div class="cols">
         <div class="col">
           <h3>Parcours</h3>
-          <p>{{ practice.background }}</p>
+          {% for paragraph in practice.background %}
+            <p>{{ paragraph }}</p>
+          {% endfor %}
         </div>
         <div class="col">
           <h3>L’approche</h3>
@@ -70,12 +72,15 @@
     <div class="section__inner">
       <h2 class="center" id="consult-titre">Consultations</h2>
       <dl class="facts">
+        <div class="fact"><dt>Public</dt><dd>{{ practice.audience }}</dd></div>
         {% for consultation in practice.consultations %}
           <div class="fact"><dt>Type</dt><dd>{{ consultation.kind }}</dd></div>
           <div class="fact"><dt>Durée</dt><dd>{{ consultation.duration }}</dd></div>
           <div class="fact"><dt>Tarif</dt><dd>{{ consultation.price }}</dd></div>
         {% endfor %}
       </dl>
+      <p class="facts__note">{{ practice.reimbursement }}</p>
+      <p class="facts__note">{{ practice.complement }}</p>
     </div>
   </section>
 
